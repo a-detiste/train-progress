@@ -28,12 +28,13 @@ class Progress:
     colour: tuple[int, int, int] = GREEN
 
     def __init__(self) -> None:
+        pygame.init()
         self.broker = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, "train")
         self.broker.on_connect = self.on_connect
         self.broker.on_message = self.on_message
+        self.font = pygame.font.SysFont("Arial", 32)
 
     def run(self) -> NoReturn:
-        pygame.init()
         pygame.display.set_caption("local-iv")
         self.screen = pygame.display.set_mode((640, 480))
         background = pygame.Surface(self.screen.get_size())
@@ -95,7 +96,11 @@ class Progress:
         if not line:
             return
         for i, point in enumerate(line):
-            pygame.draw.circle(self.screen, self.colour, (70,70*(1+i)), 20)
+            x = 70
+            y = 70*(1+i)
+            pygame.draw.circle(self.screen, self.colour, (x, y), 20)
+            txtsurf = self.font.render(point, True, WHITE)
+            self.screen.blit(txtsurf, (x - txtsurf.get_width() // 2, y - txtsurf.get_height() // 2))
             time.sleep(0.7)
             pygame.display.update()
 
